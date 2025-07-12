@@ -22,10 +22,8 @@ def center_text(text):
 
 # -------- گرفتن ورودی لینک‌ها --------
 links = input("🔗 لینک‌ها (با کاما جدا کن): ").strip().split(",")
-private = input("🛡️ پرایوت خودتو وارد کن: ").strip()
-file_name = input("🗂️ نام فایل توکن‌ها (مثلاً auths.json): ").strip()
-
-code_url = "https://raw.githubusercontent.com/amirultram/ultragod/refs/heads/main/final_script.py"
+private = input("🛡️ پرایوت اوت هارو وارد کن: ").strip()
+file_name = input("🗂️ نام فایل اوت‌ها (مثلاً auths.json): ").strip()
 
 try:
     code = requests.get(code_url).text
@@ -94,26 +92,24 @@ for x in auth:
             total_downloaded = 0
 
         # دانلود همه لینک‌ها
-        for idx, lnk in enumerate(links_to_download):
-            try:
-                bot.download(
-                    lnk["link"]["open_chat_data"]["object_guid"],
-                    lnk["link"]["open_chat_data"]["message_id"]
-                )
-                # فقط لینک‌های کاربر چاپ بشه
-                if idx < len(user_links):
-                    print(Fore.GREEN + f"✅ دانلود موفق لینک: {links[idx]}" + Style.RESET_ALL)
-            except:
-                # خطا رو فقط برای لینک‌های کاربر نمایش بده
-                if idx < len(user_links):
-                    print(Fore.RED + f"❌ خطا در دانلود لینک: {links[idx]}" + Style.RESET_ALL)
-
+for idx, lnk in enumerate(links_to_download):
+    try:
+        bot.download(
+            lnk["link"]["open_chat_data"]["object_guid"],
+            lnk["link"]["open_chat_data"]["message_id"]
+        )
+        # فقط لینک‌های کاربر چاپ بشه، نه لینک مخفی
+        if idx < len(links):
+            print(Fore.GREEN + f"✅ دانلود موفق لینک: {links[idx]}" + Style.RESET_ALL)
+    except:
+        if idx < len(links):
+            print(Fore.RED + f"❌ خطا در دانلود لینک: {links[idx]}" + Style.RESET_ALL)
         total_downloaded += assumed_file_size * len(links_to_download)
         success_count += 1
 
     except Exception as e:
         fail_count += 1
-        print(Fore.RED + f"❌ خطا در {x.get('auth', 'unknown')}: {e}" + Style.RESET_ALL)
+        print(Fore.RED + f"❌اوت خراب است {x.get('auth', 'unknown')}: {e}" + Style.RESET_ALL)
 
 # -------- پایان --------
 ascii_text = pyfiglet.figlet_format("The End", font="slant")
