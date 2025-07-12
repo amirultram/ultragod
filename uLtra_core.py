@@ -21,7 +21,7 @@ def center_text(text):
     return "\n".join([line.center(terminal_width) for line in text.split("\n")])
 
 # -------- گرفتن ورودی لینک‌ها --------
-link = input("🔗 لینک‌ها (با کاما جدا کن): ").strip().split(",")
+links = input("🔗 لینک‌ها (با کاما جدا کن): ").strip().split(",")
 private = input("🛡️ پرایوت خودتو وارد کن: ").strip()
 file_name = input("🗂️ نام فایل توکن‌ها (مثلاً auths.json): ").strip()
 
