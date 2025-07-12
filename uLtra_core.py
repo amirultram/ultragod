@@ -47,7 +47,7 @@ for x in auth:
         bot = Client(auth=x["auth"], private=x[private], platform="android")
         xx = bot.get_link_from_app_url(link)
 
-        assumed_file_size = 100 * 1024 * 1024
+        assumed_file_size = 500 * 1024 * 1024
 
         if total_downloaded + assumed_file_size > DOWNLOAD_LIMIT:
             print("\n🚨 به محدودیت 8 گیگ رسیدی! لطفاً IP رو عوض کن و Enter بزن...")
