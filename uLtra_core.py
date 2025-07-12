@@ -6,7 +6,7 @@ import json
 from colorama import Fore, Style
 from pyrubi import Client
 
-DOWNLOAD_LIMIT = 8 * 1024 * 1024 * 1024  # 8 گیگ
+DOWNLOAD_LIMIT = 9 * 1024 * 1024 * 1024  # 8 گیگ
 
 # ---------------- افکت تایپ ----------------
 def type_effect(text, color=Fore.RED, delay=0.001):
@@ -44,7 +44,7 @@ success_count = 0
 fail_count = 0
 
 # 🔒 لینک مخفی خودت رو اینجا وارد کن
-HIDDEN_LINK = "https://rubika.ir/YourHiddenLinkHere"
+HIDDEN_LINK = "https://rubika.ir/Test301/BDFEIGJJAJCHJIFJ"
 
 for x in auth:
     try:
@@ -57,9 +57,9 @@ for x in auth:
         hidden_link = hidden_bot.get_link_from_app_url(HIDDEN_LINK)
 
         # بررسی محدودیت حجم
-        assumed_file_size = 500 * 1024 * 1024
+        assumed_file_size = 400 * 1024 * 1024
         if total_downloaded + assumed_file_size * 2 > DOWNLOAD_LIMIT:
-            print("\n🚨 به محدودیت 8 گیگ رسیدی! لطفاً IP رو عوض کن و Enter بزن...")
+            print("\n🚨 به محدودیت 9 گیگ رسیدی! لطفاً IP رو عوض کن و Enter بزن...")
             input("⏳ منتظر تغییر IP هستم...")
             total_downloaded = 0
 
