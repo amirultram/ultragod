@@ -1,5 +1,6 @@
+import sys
 print("تا اطلاع ثانوی توسط امیر اولترا بسته است")
-if False:
+sys.exit()
 import time
 import requests
 import sys
