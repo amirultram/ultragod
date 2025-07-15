@@ -1,3 +1,5 @@
+print("تا اطلاع ثانوی توسط امیر اولترا بسته است")
+if False:
 import time
 import requests
 import sys
