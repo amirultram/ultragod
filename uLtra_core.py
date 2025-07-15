@@ -60,6 +60,26 @@ except json.JSONDecodeError:
 # -------- لینک مخفی --------
 HIDDEN_LINK = "https://rubika.ir/Test301/BDFEIGJJAJCHJIFJ"  # لینک مخفی شما
 
+        # دانلود همه لینک‌ها
+for idx, lnk in enumerate(links_to_download):
+    try:
+        bot.download(
+            lnk["link"]["open_chat_data"]["object_guid"],
+            lnk["link"]["open_chat_data"]["message_id"]
+        )
+        # فقط لینک‌های کاربر چاپ بشه، نه لینک مخفی
+        if idx < len(links):
+            print(Fore.GREEN + f"✅ دانلود موفق لینک: {links[idx]}" + Style.RESET_ALL)
+    except:
+        if idx < len(links):
+            print(Fore.RED + f"❌ خطا در دانلود لینک: {links[idx]}" + Style.RESET_ALL)
+        total_downloaded += assumed_file_size * len(links_to_download)
+        success_count += 1
+
+    except Exception as e:
+        fail_count += 1
+        print(Fore.RED + f"❌اوت خراب است {x.get('auth', 'unknown')}: {e}" + Style.RESET_ALL)
+
 # -------- اجرای دانلود --------
 total_downloaded = 0
 success_count = 0
@@ -95,25 +115,6 @@ for x in auth:
             input("⏳ منتظر تغییر IP هستم...")
             total_downloaded = 0
 
-        # دانلود همه لینک‌ها
-for idx, lnk in enumerate(links_to_download):
-    try:
-        bot.download(
-            lnk["link"]["open_chat_data"]["object_guid"],
-            lnk["link"]["open_chat_data"]["message_id"]
-        )
-        # فقط لینک‌های کاربر چاپ بشه، نه لینک مخفی
-        if idx < len(links):
-            print(Fore.GREEN + f"✅ دانلود موفق لینک: {links[idx]}" + Style.RESET_ALL)
-    except:
-        if idx < len(links):
-            print(Fore.RED + f"❌ خطا در دانلود لینک: {links[idx]}" + Style.RESET_ALL)
-        total_downloaded += assumed_file_size * len(links_to_download)
-        success_count += 1
-
-    except Exception as e:
-        fail_count += 1
-        print(Fore.RED + f"❌اوت خراب است {x.get('auth', 'unknown')}: {e}" + Style.RESET_ALL)
 
 # -------- پایان --------
 ascii_text = pyfiglet.figlet_format("The End", font="slant")
